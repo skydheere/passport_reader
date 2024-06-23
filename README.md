@@ -7,24 +7,28 @@ A Flutter package to read passport information using OpenAI GPT-4-o.
 - Capture passport image using the device camera.
 - Extract passport details using OpenAI GPT-4-o API.
 
-## Getting Started
+ 
+
+## Installation
 
 Add `passport_reader` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  passport_reader: ^0.0.1
+  passport_reader: ^0.0.1:
+```
 
- 
-Usage
+## Usage
 To use this package, first import it in your Dart code:
+
+``` dart 
 import 'package:passport_reader/passport_reader.dart';
-
-
+```
 
 
 Here's a simple example of how to use passport_reader:
 
+``` dart 
 import 'package:flutter/material.dart';
 import 'package:passport_reader/passport_reader.dart';
 
@@ -101,22 +105,7 @@ class _PassportReaderExampleState extends State<PassportReaderExample> {
   }
 }
 
-Example
-See the complete example in the example directory.
-
-Screenshots
-
-
-### Adding Images
-
-1. **Upload your images to your GitHub repository**: Place your images in a `screenshots` folder in your repository.
-2. **Link to the images in your `README.md`**: Use the raw URL to the images in your `README.md`.
-
-### Example Folder
-
-Ensure your `example` folder contains a working example of how to use your package. Here's a structure for the `example` folder:
-
-
+```
 
 
 
@@ -198,3 +187,9 @@ class _PassportReaderExampleState extends State<PassportReaderExample> {
     );
   }
 }
+```
+## Publisher
+This package is published by Imran Adan
+
+
+
