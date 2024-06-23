@@ -15,7 +15,7 @@ Add `passport_reader` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  passport_reader: ^0.0.6:
+  passport_reader: ^0.0.11:
 ```
 
 ## Usage
