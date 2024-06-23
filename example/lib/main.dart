@@ -37,7 +37,7 @@ class MyHomePage extends StatelessWidget {
   }
 
   void _navigateToPassportReader(BuildContext context) async {
-    final apiKey = 'your_openai-api_key'; // Replace with your actual API key
+    final apiKey = 'openai_api_key'; // Replace with your actual API key
 
     final extractedData = await Navigator.push(
       context,
@@ -61,9 +61,7 @@ class MyHomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextField('First Name', extractedData['firstName']),
-              _buildTextField('Middle Name', extractedData['middleName']),
-              _buildTextField('Last Name', extractedData['lastName']),
+              _buildTextField('Name', extractedData['name']),
               _buildTextField('Mother\'s Name', extractedData['mother_name']),
               _buildTextField('Nationality', extractedData['nationality']),
               _buildTextField('Date of Birth', extractedData['dob']),

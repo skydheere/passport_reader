@@ -15,7 +15,7 @@ Add `passport_reader` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  passport_reader: ^0.0.1:
+  passport_reader: ^0.0.6:
 ```
 
 ## Usage
@@ -44,149 +44,90 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: PassportReaderExample(),
+      home: MyHomePage(),
     );
   }
 }
 
-class PassportReaderExample extends StatefulWidget {
-  @override
-  _PassportReaderExampleState createState() => _PassportReaderExampleState();
-}
-
-class _PassportReaderExampleState extends State<PassportReaderExample> {
-  Map<String, String> passportData = {};
-
-  Future<void> _scanPassport() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PassportReader(
-          apiKey: 'YOUR_API_KEY',
-        ),
-      ),
-    );
-
-    if (result != null && result is Map<String, String>) {
-      setState(() {
-        passportData = result;
-      });
-    }
-  }
-
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Passport Reader Example'),
+        title: const Text('Passport Reader Example'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: _scanPassport,
-              child: Text('Scan Passport'),
-            ),
-            if (passportData.isNotEmpty) ...[
-              Text('First Name: ${passportData['firstName']}'),
-              Text('Middle Name: ${passportData['middleName']}'),
-              Text('Last Name: ${passportData['lastName']}'),
-              Text('Mother Name: ${passportData['mother_name']}'),
-              Text('Nationality: ${passportData['nationality']}'),
-              Text('Date of Birth: ${passportData['dob']}'),
-              Text('Gender: ${passportData['gender']}'),
-              Text('Passport No: ${passportData['passport_no']}'),
-            ]
-          ],
+        child: ElevatedButton(
+          onPressed: () {
+            _navigateToPassportReader(context);
+          },
+          child: const Text('Scan Passport'),
         ),
       ),
     );
   }
-}
 
-```
+  void _navigateToPassportReader(BuildContext context) async {
+    final apiKey = 'openai_api_key'; // Replace with your actual API key
 
-
-
-#### `example/lib/main.dart`
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:passport_reader/passport_reader.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Passport Reader Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: PassportReaderExample(),
-    );
-  }
-}
-
-class PassportReaderExample extends StatefulWidget {
-  @override
-  _PassportReaderExampleState createState() => _PassportReaderExampleState();
-}
-
-class _PassportReaderExampleState extends State<PassportReaderExample> {
-  Map<String, String> passportData = {};
-
-  Future<void> _scanPassport() async {
-    final result = await Navigator.push(
+    final extractedData = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PassportReader(
-          apiKey: 'YOUR_API_KEY',
-        ),
+        builder: (context) => PassportReader(apiKey: apiKey),
       ),
     );
 
-    if (result != null && result is Map<String, String>) {
-      setState(() {
-        passportData = result;
-      });
+    if (extractedData != null) {
+      _showExtractedDataDialog(context, extractedData);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Passport Reader Example'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: _scanPassport,
-              child: Text('Scan Passport'),
-            ),
-            if (passportData.isNotEmpty) ...[
-              Text('First Name: ${passportData['firstName']}'),
-              Text('Middle Name: ${passportData['middleName']}'),
-              Text('Last Name: ${passportData['lastName']}'),
-              Text('Mother Name: ${passportData['mother_name']}'),
-              Text('Nationality: ${passportData['nationality']}'),
-              Text('Date of Birth: ${passportData['dob']}'),
-              Text('Gender: ${passportData['gender']}'),
-              Text('Passport No: ${passportData['passport_no']}'),
-            ]
-          ],
+  void _showExtractedDataDialog(
+      BuildContext context, Map<String, dynamic> extractedData) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Extracted Passport Information'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextField('Name', extractedData['name']),
+              _buildTextField('Mother\'s Name', extractedData['mother_name']),
+              _buildTextField('Nationality', extractedData['nationality']),
+              _buildTextField('Date of Birth', extractedData['dob']),
+              _buildTextField('Gender', extractedData['gender']),
+              _buildTextField('Passport Number', extractedData['passport_no']),
+            ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(value),
+          const Divider(),
+        ],
       ),
     );
   }
 }
+
 ```
 ## Publisher
 This package is published by Imran Adan

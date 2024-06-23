@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -6,22 +7,29 @@ import 'package:flutter/material.dart';
 import 'api_service.dart';
 
 class PassportReader extends StatefulWidget {
-  final String apiKey;
-
   // ignore: use_super_parameters
   const PassportReader({Key? key, required this.apiKey}) : super(key: key);
+
+  final String apiKey;
 
   @override
   _PassportReaderState createState() => _PassportReaderState();
 }
 
 class _PassportReaderState extends State<PassportReader> {
+  String? resultText;
+
+  CameraDescription? _cameraDescription;
+  XFile? _capturedImage;
   late CameraController _controller;
   Future<void>? _initializeControllerFuture;
-  String? resultText;
-  XFile? _capturedImage;
   bool _isProcessing = false;
-  CameraDescription? _cameraDescription;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -42,12 +50,6 @@ class _PassportReaderState extends State<PassportReader> {
     } else {
       print("No cameras available");
     }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   Future<void> _takePicture() async {
@@ -75,13 +77,27 @@ class _PassportReaderState extends State<PassportReader> {
           File(_capturedImage!.path), widget.apiKey);
 
       setState(() {
-        _isProcessing = false;
-        if (response['success']) {
-          final jsonData = response['data'];
-          resultText = _formatResponse(jsonData);
-          _handleParsedData(jsonData);
-        } else {
-          resultText = 'Error: ${response['error']}';
+        try {
+          _isProcessing = false;
+          if (response != 'No text found') {
+            final jsonResponseString = response
+                .replaceAllMapped(
+                  RegExp(r'```json([\s\S]*?)```'),
+                  (match) => match.group(1) ?? '',
+                )
+                .trim();
+
+            final jsonResponse = jsonDecode(jsonResponseString);
+
+            _handleParsedData(jsonResponse);
+          } else {
+            resultText = 'Error: ${response}';
+          }
+        } catch (e) {
+          setState(() {
+            _capturedImage = null;
+          });
+          log('Failed to decode JSON response: $e');
         }
       });
     }
@@ -91,16 +107,17 @@ class _PassportReaderState extends State<PassportReader> {
     return jsonEncode(data);
   }
 
-  void _handleParsedData(Map<String, dynamic> jsonResponse) {
+  void _handleParsedData(jsonResponse) {
     try {
       final extractedData = {
-        'Name': jsonResponse['name'] ?? '',
+        'name': jsonResponse['name'] ?? '',
         'mother_name': jsonResponse['mother_name'] ?? '',
         'nationality': jsonResponse['nationality'] ?? '',
         'dob': jsonResponse['dob'] ?? '',
         'gender': jsonResponse['gender'] ?? '',
         'passport_no': jsonResponse['passport_no'] ?? '',
       };
+      log('extacted data $extractedData');
       Navigator.pop(context, extractedData);
     } catch (e) {
       setState(() {
@@ -124,8 +141,8 @@ class _PassportReaderState extends State<PassportReader> {
                   ? Container(
                       decoration: const BoxDecoration(
                           image: DecorationImage(
-                              image:
-                                  AssetImage('assets/images/pass_scan.gif'))),
+                              image: AssetImage('assets/images/pass_scan.gif',
+                                  package: 'passport_reader'))),
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
