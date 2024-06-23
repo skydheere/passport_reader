@@ -1,6 +1,6 @@
 name: passport_reader
 description: A Flutter package to read passport information using OpenAI GPT-4-o.
-version: 0.0.9
+version: 0.0.10
 homepage: https://github.com/skydheere/passport_reader
 repository: https://github.com/skydheere/passport_reader.git
 issue_tracker: https://github.com/skydheere/passport_reader/issues
@@ -26,13 +26,13 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  plugin:
-    platforms:
-      android:
-        package: com.example.passport_reader
-        pluginClass: PassportReaderPlugin
-      ios:
-        pluginClass: PassportReaderPlugin
+  # plugin:
+  #   platforms:
+  #     android:
+  #       package: com.example.passport_reader
+  #       pluginClass: PassportReaderPlugin
+  #     ios:
+  #       pluginClass: PassportReaderPlugin
 
   assets:
     - assets/images/pass_scan.gif

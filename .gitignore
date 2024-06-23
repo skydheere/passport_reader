@@ -38,14 +38,15 @@ app.*.symbols
 app.*.map.json
 
 # Android Studio will place build artifacts here
+android/
 /android/app/debug
 /android/app/profile
 /android/app/release
 
 # Allow android/src directory
-!android/src/
-!android/src/main/
-!android/src/main/kotlin/
-!android/src/main/kotlin/com/
-!android/src/main/kotlin/com/example/
-!android/src/main/kotlin/com/example/passport_reader/
+# !android/src/
+# !android/src/main/
+# !android/src/main/kotlin/
+# !android/src/main/kotlin/com/
+# !android/src/main/kotlin/com/example/
+# !android/src/main/kotlin/com/example/passport_reader/
